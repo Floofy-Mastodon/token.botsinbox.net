@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Botsinbox App Token</title>
+	<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+	<h1>Create New App</h1>
+	<input type="text" id="appName" placeholder="App Name" required>
+	<button onclick="createNewApp()">Create App</button>
+
+	<div class="result" id="newAppResult" style="display: none;"></div>
+	<div class="error" id="newAppError" style="display: none;"></div>
+</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", async function() {
+		const authed = await fetch('/session');
+		if (authed.status != 200) {
+			const loc = await authed.text();
+			window.location.replace(loc);
+		}
+	});
+
+	async function createNewApp() {
+		const appName = document.getElementById('appName').value;
+		if (!appName) return;
+
+		try {
+			const response = await fetch('/new-app', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ app_name: appName })
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				document.getElementById('newAppResult').innerHTML = `<a href="${data.login_link}">Login here</a>`;
+				document.getElementById('newAppError').style.display = 'none';
+				document.getElementById('newAppResult').style.display = 'block';
+			} else {
+				const errorText = await response.text();
+				document.getElementById('newAppResult').style.display = 'none';
+				document.getElementById('newAppError').textContent = `Error: ${errorText}`;
+				document.getElementById('newAppError').style.display = 'block';
+			}
+		} catch (error) {
+			document.getElementById('newAppResult').style.display = 'none';
+			document.getElementById('newAppError').textContent = `Error: ${error.message}`;
+			document.getElementById('newAppError').style.display = 'block';
+		}
+	}
+</script>
+</body>
+</html>

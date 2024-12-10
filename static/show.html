@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Botsinbox App Token</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+		}
+		.container {
+			max-width: 600px;
+			margin: auto;
+		}
+		input[type="text"], input[type="password"] {
+			width: calc(100% - 24px);
+			padding: 10px;
+			margin-bottom: 10px;
+		}
+		button {
+			padding: 10px 15px;
+			background-color: #08f;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+		button:hover {
+			background-color: #06c;
+		}
+		.result, .error {
+			margin-top: 20px;
+			padding: 10px;
+			border-radius: 5px;
+		}
+		.result {
+			background-color: #e4f7ba;
+			color: green;
+		}
+		.error {
+			background-color: #f8d7da;
+			color: red;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h1>Your app token!</h1>
+	<input type="text" id="token" placeholder="App Token" readonly>
+	<p>This token will not be shown again. Refreshing this page will
+	direct you back to the app creation.</p>
+</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", async function() {
+		const authed = await fetch('/session');
+		if (authed.status != 200) {
+			const loc = await authed.text();
+			window.location.replace(loc);
+		}
+	});
+</script>
+</body>
+</html>
